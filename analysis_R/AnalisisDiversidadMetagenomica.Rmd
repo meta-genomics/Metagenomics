@@ -1,0 +1,251 @@
+---
+title: "Análisis de diversidad metagenómica"
+author: "Dulce I. Valdivia"
+date: "Octubre 2022"
+output:
+  html_document: 
+    toc: true
+    number_sections: true
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+En este manual se realizarán análisis básicos de diversidad y abundancia de muestras de metagenómica. Para poder llevar a acabo todos los pasos es necesario:
+
+- **Datos**:
+   - *Archivo de asignación taxonómica*. Archivo `.json` generado en el últmo paso del pipeline de metagenómica. Este archivo es un parseo del programa `kraken-biom` a la salida de asignación taxonómica generados por kraken (`.kraken.report`)
+
+- **Paquetes de R**:
+  - `phyloseq`: contiene las funciones necesarias para realizar los análisis correspondientes. 
+  - `tidyverse`: manipulación de datos.
+  - `ggplot2` y `scico`: para hacer los gráficos de dichos análisis. 
+  
+  A continuación se muestra cómo hacer la instalación de estos paquetes:\
+
+```{r install, eval=FALSE}
+  if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+  BiocManager::install("phyloseq")
+  install.packages("ggplot2")
+  install.packages("scico")
+  install.packages("tidyverse")
+```
+
+# Carga de datos
+
+Iniciamos carando los paquetes que necesitaremos:
+
+```{r packageLoading, warning=FALSE, message=FALSE}
+library(phyloseq)
+library(ggplot2)
+library(tidyverse)
+library(scico)
+```
+
+Cargamos la asignación taxonómica generada:
+
+````{r dataLoading}
+taxonomy <- import_biom("taxonomy_kraken.json")
+```
+
+# Exploración inicial y limpieza de datos
+
+Checamos el contenido del objeto taxonomy:
+```{r dataExploration}
+# Información general:
+  taxonomy
+
+# Conteo de taxa por muestra:
+  taxonomy@otu_table %>% head()
+
+# Descripción de taxones:
+  taxonomy@tax_table %>% head()
+  # O bien:
+  taxonomy@tax_table@.Data %>% head()
+```
+
+Vamos a limpiar los datos de dos maneras distintas. Primero, como observamos en la exploración del objeto tax_table, los taxones tienen al inicio una etiqueta de cuatro caracteres que corresponde al rango taxonómico al que corresponden. Eliminaremos estas etiquetas para tener una mejor visualización y reasignaremos los nombres de las columnas por los rangos taxonómicos correspondientes:
+
+```{r cleanLabels}
+  # Limpiar etiquetas:
+  taxonomy@tax_table@.Data <- substring(taxonomy@tax_table@.Data, 4)
+  
+  # Renombrar columnas:
+  colnames(taxonomy@tax_table@.Data) <- c("Kingdom",
+                                          "Phylum",
+                                          "Class",
+                                          "Order",
+                                          "Family",
+                                          "Genus",
+                                          "Species")
+  
+  # Explorar resultado:
+  taxonomy@tax_table@.Data %>% head()
+```
+
+Con esta primer limpieza podemos explorar cuántos linajes distintos se asignaron
+a los distintos niveles taxonómicos. Checamos los tres más altos:
+
+```{r taxonExploration}
+taxonomy@tax_table@.Data %>% 
+  as_tibble() %>%
+  group_by(Kingdom) %>%
+  count() %>% 
+  ggplot(aes(x = Kingdom, y = n, fill = Kingdom)) +
+      geom_bar(stat = "identity") +
+      coord_flip() + 
+      scale_fill_scico_d(palette = "batlow") +
+      labs(x = "Total de asignaciones", 
+           y = "Kingdom") +
+      theme_minimal() +
+      theme(legend.position = "none")
+      
+taxonomy@tax_table@.Data %>% 
+  as_tibble() %>%
+  group_by(Phylum) %>% 
+  count() %>%
+  arrange(desc(n)) %>%
+  head(10) %>% 
+  ggplot(aes(x = Phylum, y = n, fill = Phylum)) +
+      geom_bar(stat = "identity") +
+      scale_fill_scico_d(palette = "batlow") +
+      labs(y = "Total de asignaciones",
+           x = "Phylum") +
+      theme_minimal() + 
+      coord_flip() + 
+      theme(legend.position = "none")
+
+taxonomy@tax_table@.Data %>% 
+  as_tibble() %>%
+  group_by(Class) %>% 
+  count() %>%
+  arrange(desc(n)) %>% 
+  head(10) %>% 
+  ggplot(aes(x = Class, y = n, fill = Class)) +
+      geom_bar(stat = "identity") +
+      scale_fill_scico_d(palette = "batlow") + 
+      labs(y = "Total de asignaciones",
+           x = "Clase") +
+      coord_flip() + 
+      theme_minimal() + 
+      theme(legend.position = "none")
+```
+
+Como vimos en la exploración por taxón, se encontraron algunos virus a nivel de reino. Ahora limpiaremos las asignaciones correspondientes a virus, mitocondrias o cloroplastos:
+
+```{r cleanTaxonomy, eval = FALSE}
+taxonomy <- subset_taxa(taxonomy,Kingdom != "Viruses" & 
+                                Family != "mitochondria" & 
+                                Class != "Chloroplast")
+```
+
+Una vez limpios nuestros datos, podemos volver a hacer las gráficas anteriores para visualizar los totales limpios.
+
+# Abundancia taxonómica
+
+En esta sección exploraremos la composición taxonómica y de abundancia en las tres muestras.
+
+Primero generaremos el porcentaje de **abundancia** de cada taxa en cada muestra y limitaremos el estudio a nivel de **phylum**.
+
+```{r percentageGlom}
+  # Calculamos los porcentajes de abundancia por muestra
+  percentages <- transform_sample_counts(taxonomy, 
+                                         function(x) x * 100 / sum(x))
+  # Verificamos:
+  percentages@otu_table@.Data %>% head
+  
+  # Nos quedamos con los datos a nivel de Phylum y
+  # aquellos phyla que tengan una abundancia menor
+  # de <0.5 las colapsamos en una misma clase para la 
+  # visualización.
+  phylaTax <- tax_glom(percentages, taxrank = "Phylum") %>%
+                  psmelt() %>%
+                  as_tibble() %>%
+                  mutate(Label = ifelse(Abundance < 0.5, 
+                            "< 0.5% abund.",
+                            Phylum))
+  # Visualizamos:
+  phylaTax %>%
+        ggplot(aes(x = Sample, y = Abundance, fill = Label)) +
+            geom_bar(stat = "identity", 
+                     position = "stack", 
+                     color = "black") +
+            labs(x = "Muestra", y = "Abundancia", fill = "Phylum") + 
+            scale_fill_scico_d(palette = "batlow") +
+            theme_minimal()
+  
+  # Para ver aquellos phyla con poca abundancia (<0.5):
+  phylaTax %>% 
+      filter(Label == "< 0.5% abund.") %>%
+      dplyr::select(Phylum) %>%
+      unique()
+  
+```
+
+# Análisis de diversidad 
+Una vez que analizamos la composición y abundancia taxonómica de las muestras, vamos a analizar cómo es su diversidad. La diversidad alfa, explica la diversidad *dentro de cada muestra*, mientras que la diversidad beta analiza la diversidad *entre las distintas muestras*.
+
+## Diversidad alpha
+
+La función ``plot_richness` calcula los distintos índices de diversidad al mismo tiempo y provee el gráfico base 
+de estos valores.
+
+```{r divAlpha}
+  
+  # Hacemos el grafico de los distintos indices de diversidad
+  # y lo guardamos en una variable para poder acceder posteriormente
+  # a los datos crudos. 
+
+  alfaDiv <- plot_richness(taxonomy,
+                measures = c("Observed",
+                             "Chao1",
+                             "Shannon")) +
+                geom_point(aes(color = samples), size = 3) +
+                scale_color_brewer(palette = "Dark2") + 
+                labs(x = "Índice de diversidad alfa",
+                     y = "Valor del índice",
+                     color = "Muestra") + 
+                theme_minimal() +
+                theme(axis.text.x = element_blank())
+
+  # Visualizamos el grafico:
+  alfaDiv
+  
+  # Consultamos los datos crudos:
+  alfaDiv$data
+```
+
+## Diversidad beta
+
+Existen varias formas de calcular la diversidad beta. Aquí se muestra el método NMDS con distancia Bray-Curtis.
+El objetivo del método NMDS es hacer un análisis de reducción de dimensionalidad entre las muestras de manera
+que si fuesen similares generarían clusters en la representación 2D.
+
+```{r pressure, warning=FALSE, messages = FALSE}
+# Calculamos con la funcion ordinate
+  betaDiv <- ordinate(percentages, 
+                      method = "NMDS",
+                      distance = "bray")
+
+# Hacemos el grafico inicial
+  x <- plot_ordination(percentages, 
+                  ordination = betaDiv) 
+
+# Agregamos la variable de la muestra para poder 
+# diferenciarlas en el grafico
+  x$data <- x$data %>%
+                mutate(muestra = rownames(x$data))
+
+# Grafico final: 
+  x +
+    geom_point(aes(color = muestra), size = 3) +
+    scale_color_brewer(palette = "Dark2") + 
+    labs(color = "Muestra") + 
+    theme_minimal() +
+    theme(axis.text.x = element_blank())
+```
+Observamos que nuestras muestras se encuentran muy separadas entre sí y, por lo tanto, son disímiles entre ellas. 
+Para utilizar otros métodos y distancias puede consultarse la función `distanceMethodList`.

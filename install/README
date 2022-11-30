@@ -1,0 +1,97 @@
+# Este pipeline está basado en el protocolo: ------------------------------
+
+	Metagenomics Bioinformatic Pipeline
+	Diego Garfias-Gallegos et al. 
+	Metagenomics Bioinformatic Pipeline. 
+	Alejandro Pereira-Santana, Samuel David Gamboa-Tuz and 
+	Luis Carlos Rodríguez-Zapata (eds.), 
+	Plant Comparative Genomics,
+	Methods in Molecular Biology, vol. 2512
+	https://doi.org/10.1007/978-1-0716-2429-6_10,
+
+# Directorios de trabajo --------------------------------------------------
+
+Run: ./src/0_makeDirTree
+
+# Instalacion de software en Linux ----------------------------------------
+
+1. SRA toolkit (https://github.com/ncbi/sra-tools)
+	conda install -c bioconda sra-tools
+	>fasterq-dump
+	wget --output-document sratoolkit.tar.gz https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz
+	tar -vxzf sratoolkit.tar.gz
+	cd sratoolkit.3.0.0-ubuntu64/lib
+	export PATH=$PATH:$PWD  # que elegancia la de Francia
+
+2. FastQC (https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
+	conda install -c bioconda fastqc python=2.7
+
+3. Trimmomatic (http://www.usadellab.org/cms/?¼trimmomatic)
+	conda install -c bioconda trimmomatic 
+
+4. Kraken2 (http://ccb.jhu.edu/software/kraken2/)
+	conda install -c bioconda kraken2
+
+5. MaxBin2 (https://anaconda.org/bioconda/maxbin2),
+#	conda install -c bioconda maxbin2 python=2.7
+	Download MaxBin-2.2.7.tar.gz from: https://sourceforge.net/projects/maxbin2/files/	
+	tar -xvzf MaxBin-2.2.7.tar.gz
+	cd MaxBin-2.2.7
+        export PATH=$PATH:$PWD
+	cd src
+	make
+	cd ..
+	./autobuild_auxiliary
+
+6. metaSPAdes (https://cab.spbu.ru/software/spades/)
+	wget http://cab.spbu.ru/files/release3.15.5/SPAdes-3.15.5-Linux.tar.gz
+	tar -xzf SPAdes-3.15.5.tar.gz
+	cd SPAdes-3.15.5-Linux/bin/
+
+	# Agregar al PATH
+        pwd # Copiar el path de los ejecutables
+	export PATH="/home/dvaldivia/projects/biodigestores/bioinfo/metagenomics/lib/SPAdes-3.15.5-Linux/bin:$PATH"
+
+
+7. kraken-biom (https://github.com/smdabdoub/kraken-biom)
+	conda install -c bioconda kraken-biom
+
+8. CheckM (https://ecogenomics.github.io/CheckM/)
+	conda install numpy matplotlib
+	conda install -c bioconda pysam 
+	conda install hmmer 
+	conda install -c bioconda prodigal pplacer
+	pip3 install checkm-genome
+
+# Instalación de paquetes de R ---------------------------------------------
+
+1. Phyloseq (https://www.bioconductor.org/packages/release/bioc/html/phyloseq.html)
+	if (!require("BiocManager", quietly = TRUE))
+		install.packages("BiocManager")
+
+	BiocManager::install("phyloseq")
+
+2. ggplot2
+	install.packages("ggplot2")
+
+# Obtención de datos --------------------------------------------------------
+
+Run: ./src/1_getData.sh
+
+
+# Calidad de secuencias -----------------------------------------------------
+
+Run: ./src/2_QualityCheck.sh
+
+Aquí hay que sacar los archivos del primer html para ver en dónde hay que poner
+los cortes que necesita Trinity. 
+
+Como no hay ambiente gráfico hay que ver los archivos localmente. Para mandarlos
+a la computadora local hay que hacer:
+
+scp dvaldivia@botanero.cs.cinvestav.mx:/home/dvaldivia/projects/biodigestores/bioinfo/metagenomics/results/fastqc/*.html .
+
+
+
+
+
