@@ -35,6 +35,6 @@ threads=$1
 
 # SCRIPT 3 ----------------------------------------------------------
 # Config:
-	dirKrakenDB="home/dvaldivia/data/krakenDB"
+	dirKrakenDB="home/metagenomics/data/krakenDB"
 # Run:
 	./src/3_taxonomicAssignment.sh $threads $dirKrakenDB >> metagenomics.log
