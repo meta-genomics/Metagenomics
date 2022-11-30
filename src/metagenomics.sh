@@ -28,8 +28,8 @@ threads=$1
 
 # SCRIPT 2 ----------------------------------------------------------
 # Config:
-	export PATH="/home/dvaldivia/projects/biodigestores/metaPipeline/lib/SPAdes-3.15.5-Linux/bin:$PATH"
-	export PATH="/home/dvaldivia/projects/biodigestores/metaPipeline/lib/MaxBin-2.2.7/:$PATH"
+	export PATH="/home/metagenomics/projects/biodigestores/metaPipeline/lib/SPAdes-3.15.5-Linux/bin:$PATH"
+	export PATH="/home/metagenomics/projects/biodigestores/metaPipeline/lib/MaxBin-2.2.7/:$PATH"
 # Run:
 	./src/2_metagenomeAssembly.sh $threads >> metagenomics.log
 
