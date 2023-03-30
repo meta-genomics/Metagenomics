@@ -1,0 +1,118 @@
+# This pipeline is based in the protocol: ------------------------------
+
+	Metagenomics Bioinformatic Pipeline
+	Diego Garfias-Gallegos et al. 
+	Metagenomics Bioinformatic Pipeline. 
+	Alejandro Pereira-Santana, Samuel David Gamboa-Tuz and 
+	Luis Carlos Rodríguez-Zapata (eds.), 
+	Plant Comparative Genomics,
+	Methods in Molecular Biology, vol. 2512
+	https://doi.org/10.1007/978-1-0716-2429-6_10,
+
+# Setting up working directory --------------------------------------------------
+
+Run: ./setup.sh
+
+# Software Installation on Linux ----------------------------------------
+
+1. Creating a conda environment with python 3.5
+	conda create -n meta-omics python=3.5 anaconda
+	
+2. SRA toolkit (https://github.com/ncbi/sra-tools)
+	#Installation by conda
+	conda install -c bioconda sra-tools
+	# Or installation by compilation
+	wget --output-document sratoolkit.tar.gz https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz
+	tar -vxzf sratoolkit.tar.gz
+	cd sratoolkit.3.0.0-ubuntu64/lib
+	export PATH=$PATH:$PWD
+
+Before use of SRA toolkit it necessary to configure it according to this guide https://github.com/ncbi/sra-tools/wiki/03.-Quick-Toolkit-Configuration
+
+3. FastQC (https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
+	conda install -c bioconda fastqc
+
+4. Trimmomatic (http://www.usadellab.org/cms/?¼trimmomatic)
+	conda install -c bioconda trimmomatic 
+
+4. Kraken2 (http://ccb.jhu.edu/software/kraken2/)
+	conda install -c bioconda kraken2
+	
+Select a database from this source: https://benlangmead.github.io/aws-indexes/k2 y descargarla con wget.
+Unzip database (tar -vxzf filename.tar.gz) in a folder to be used as repository 
+For botanero server users the database available is PlusPF-8 update 08/9/2022
+
+5. MaxBin2 (https://anaconda.org/bioconda/maxbin2),
+	#Installation by conda
+	conda install -c bioconda maxbin2
+	#Or installation by compilation
+	Download MaxBin-2.2.7.tar.gz from: https://sourceforge.net/projects/maxbin2/files/	
+	tar -xvzf MaxBin-2.2.7.tar.gz
+	cd MaxBin-2.2.7
+        export PATH=$PATH:$PWD
+	cd src
+	make
+	cd ..
+	./autobuild_auxiliary
+	
+	#If autobuild doesn´t install auxiliary software, install manually the following software:
+	5.a Bowtie2 (http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
+		conda install -c bioconda bowtie2
+		
+	5.b FragGeneScan (http://omics.informatics.indiana.edu/FragGeneScan/)
+		conda install -c bioconda fraggenescan
+		
+	5.c Hmmer3 (http://hmmer.janelia.org/)
+		conda install -c bioconda hmmer
+		
+	5.d IDBA-UD (http://i.cs.hku.hk/~alse/hkubrg/projects/idba_ud/)
+		conda install -c bioconda idba
+
+6. metaSPAdes (https://cab.spbu.ru/software/spades/)
+	wget http://cab.spbu.ru/files/release3.15.5/SPAdes-3.15.5-Linux.tar.gz
+	tar -xzf SPAdes-3.15.5.tar.gz
+	cd SPAdes-3.15.5-Linux/bin/
+  export PATH=$PATH:$PWD
+
+7. kraken-biom (https://github.com/smdabdoub/kraken-biom)
+	conda install -c bioconda kraken-biom
+
+8. CheckM (https://ecogenomics.github.io/CheckM/)
+	conda install numpy matplotlib
+	conda install -c bioconda pysam 
+	conda install -c bioconda hmmer
+	conda install -c bioconda prodigal pplacer
+	pip3 install checkm-genome
+
+# Installation of R packages ---------------------------------------------
+
+1. Phyloseq (https://www.bioconductor.org/packages/release/bioc/html/phyloseq.html)
+	if (!require("BiocManager", quietly = TRUE))
+		install.packages("BiocManager")
+
+	BiocManager::install("phyloseq")
+
+2. ggplot2
+	install.packages("ggplot2")
+	
+3. scico
+	install.packages("scico")
+  
+4. tidyverse
+	install.packages("tidyverse")
+
+# Get test run data--------------------------------------------------------
+
+Run: ./getData.sh
+
+# Quality of sequences -----------------------------------------------------
+
+Run: ./src/2_QualityCheck.sh
+
+Aquí hay que sacar los archivos del primer html para ver en dónde hay que poner
+los cortes que necesita Trinity. 
+
+Como no hay ambiente gráfico hay que ver los archivos localmente. Para mandarlos
+a la computadora local hay que hacer:
+
+scp dvaldivia@botanero.cs.cinvestav.mx:/home/dvaldivia/projects/biodigestores/bioinfo/metagenomics/results/fastqc/*.html .
