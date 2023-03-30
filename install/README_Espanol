@@ -35,14 +35,14 @@ Antes de usar SRA toolkit es necesario configurarlo segun https://github.com/ncb
 4. Trimmomatic (http://www.usadellab.org/cms/?¼trimmomatic)
 	conda install -c bioconda trimmomatic 
 
-4. Kraken2 (http://ccb.jhu.edu/software/kraken2/)
+5. Kraken2 (http://ccb.jhu.edu/software/kraken2/)
 	conda install -c bioconda kraken2
 	
 Seleccionar una base de datos de esta página: https://benlangmead.github.io/aws-indexes/k2 y descargarla con wget.
 Descomprimir la base de datos (tar -vxzf filename.tar.gz) en un directorio de repositorio
 Para usuarios de botanero la base de datos disponible es PlusPF-8 update 08/9/2022
 
-5. MaxBin2 (https://anaconda.org/bioconda/maxbin2),
+6. MaxBin2 (https://anaconda.org/bioconda/maxbin2),
 	#Por conda
 	conda install -c bioconda maxbin2
 	#Por compilacion
@@ -56,28 +56,28 @@ Para usuarios de botanero la base de datos disponible es PlusPF-8 update 08/9/20
 	./autobuild_auxiliary
 	
 	#Si el autobuild no funciona para instalar los programas auxiliares, instalar manualmente los siguientes programas:
-	5.a Bowtie2 (http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
+	6.a Bowtie2 (http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
 		conda install -c bioconda bowtie2
 		
-	5.b FragGeneScan (http://omics.informatics.indiana.edu/FragGeneScan/)
+	6.b FragGeneScan (http://omics.informatics.indiana.edu/FragGeneScan/)
 		conda install -c bioconda fraggenescan
 		
-	5.c Hmmer3 (http://hmmer.janelia.org/)
+	6.c Hmmer3 (http://hmmer.janelia.org/)
 		conda install -c bioconda hmmer
 		
 	5.d IDBA-UD (http://i.cs.hku.hk/~alse/hkubrg/projects/idba_ud/)
 		conda install -c bioconda idba
 
-6. metaSPAdes (https://cab.spbu.ru/software/spades/)
+7. metaSPAdes (https://cab.spbu.ru/software/spades/)
 	wget http://cab.spbu.ru/files/release3.15.5/SPAdes-3.15.5-Linux.tar.gz
 	tar -xzf SPAdes-3.15.5.tar.gz
 	cd SPAdes-3.15.5-Linux/bin
 	export PATH=$PATH:$PWD
 
-7. kraken-biom (https://github.com/smdabdoub/kraken-biom)
+8. kraken-biom (https://github.com/smdabdoub/kraken-biom)
 	conda install -c bioconda kraken-biom
 
-8. CheckM (https://ecogenomics.github.io/CheckM/)
+9. CheckM (https://ecogenomics.github.io/CheckM/)
 	conda install numpy matplotlib
 	conda install -c bioconda pysam 
 	conda install -c bioconda hmmer
