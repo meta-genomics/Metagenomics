@@ -11,29 +11,37 @@
 
 # Directorios de trabajo --------------------------------------------------
 
-Run: ./src/0_makeDirTree
+Run: ./setup.sh
 
 # Instalacion de software en Linux ----------------------------------------
 
-1. SRA toolkit (https://github.com/ncbi/sra-tools)
+1. Creacion del ambiente conda, especificando python 3.5
+	conda create -n meta-omics python=3.5 anaconda
+	
+2. SRA toolkit (https://github.com/ncbi/sra-tools)
+	#Por conda
 	conda install -c bioconda sra-tools
-	>fasterq-dump
+	#Por compilacion
 	wget --output-document sratoolkit.tar.gz https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz
 	tar -vxzf sratoolkit.tar.gz
 	cd sratoolkit.3.0.0-ubuntu64/lib
 	export PATH=$PATH:$PWD  # que elegancia la de Francia
 
-2. FastQC (https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
-	conda install -c bioconda fastqc python=2.7
+Antes de usar SRA toolkit es necesario configurarlo segun https://github.com/ncbi/sra-tools/wiki/03.-Quick-Toolkit-Configuration
 
-3. Trimmomatic (http://www.usadellab.org/cms/?¼trimmomatic)
+3. FastQC (https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
+	conda install -c bioconda fastqc
+
+4. Trimmomatic (http://www.usadellab.org/cms/?¼trimmomatic)
 	conda install -c bioconda trimmomatic 
 
 4. Kraken2 (http://ccb.jhu.edu/software/kraken2/)
 	conda install -c bioconda kraken2
 
 5. MaxBin2 (https://anaconda.org/bioconda/maxbin2),
-#	conda install -c bioconda maxbin2 python=2.7
+	#Por conda
+	conda install -c bioconda maxbin2
+	#Por compilacion
 	Download MaxBin-2.2.7.tar.gz from: https://sourceforge.net/projects/maxbin2/files/	
 	tar -xvzf MaxBin-2.2.7.tar.gz
 	cd MaxBin-2.2.7
@@ -42,6 +50,19 @@ Run: ./src/0_makeDirTree
 	make
 	cd ..
 	./autobuild_auxiliary
+	
+	#Si el autobuild no funciona para instalar los programas auxiliares, instalar manualmente los siguientes programas:
+	5.a Bowtie2 (http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
+		conda install -c bioconda bowtie2
+		
+	5.b FragGeneScan (http://omics.informatics.indiana.edu/FragGeneScan/)
+		conda install -c bioconda fraggenescan
+		
+	5.c Hmmer3 (http://hmmer.janelia.org/)
+		conda install -c bioconda hmmer
+		
+	5.d IDBA-UD (http://i.cs.hku.hk/~alse/hkubrg/projects/idba_ud/)
+		conda install -c bioconda idba
 
 6. metaSPAdes (https://cab.spbu.ru/software/spades/)
 	wget http://cab.spbu.ru/files/release3.15.5/SPAdes-3.15.5-Linux.tar.gz
@@ -59,7 +80,7 @@ Run: ./src/0_makeDirTree
 8. CheckM (https://ecogenomics.github.io/CheckM/)
 	conda install numpy matplotlib
 	conda install -c bioconda pysam 
-	conda install hmmer 
+	conda install -c bioconda hmmer
 	conda install -c bioconda prodigal pplacer
 	pip3 install checkm-genome
 
@@ -73,11 +94,15 @@ Run: ./src/0_makeDirTree
 
 2. ggplot2
 	install.packages("ggplot2")
+	
+3. scico
+	install.packages("scico")
+4. tidyverse
+	install.packages("tidyverse")
 
-# Obtención de datos --------------------------------------------------------
+# Obtención de datos de prueba--------------------------------------------------------
 
-Run: ./src/1_getData.sh
-
+Run: ./getData.sh
 
 # Calidad de secuencias -----------------------------------------------------
 
