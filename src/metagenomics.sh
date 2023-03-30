@@ -2,7 +2,8 @@
 
 #####################################################################
 #	PIPELINE PARA EL PROCESAMIENTO DE MUESTRAS METAGENÓMICAS    #
-#			Dulce I. Valdivia                           #    
+#			Dulce I. Valdivia			    #
+#			Erika Cruz-Bonilla                          #    
 #####################################################################
 
 #####################################################################
@@ -30,11 +31,13 @@ threads=$1
 # Config:
 	export PATH="/home/metagenomics/projects/biodigestores/metaPipeline/lib/SPAdes-3.15.5-Linux/bin:$PATH"
 	export PATH="/home/metagenomics/projects/biodigestores/metaPipeline/lib/MaxBin-2.2.7/:$PATH"
+	export CHECKM_DATA_PATH="/home/metagenomics/projects/biodigestores/metaPipeline/lib/checkm_data"
+
 # Run:
 	./src/2_metagenomeAssembly.sh $threads >> metagenomics.log
 
 # SCRIPT 3 ----------------------------------------------------------
 # Config:
-	dirKrakenDB="home/metagenomics/data/krakenDB"
+	dirKrakenDB="/home/metagenomics/data/krakenDB"
 # Run:
 	./src/3_taxonomicAssignment.sh $threads $dirKrakenDB >> metagenomics.log
