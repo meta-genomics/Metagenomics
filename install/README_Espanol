@@ -37,6 +37,10 @@ Antes de usar SRA toolkit es necesario configurarlo segun https://github.com/ncb
 
 4. Kraken2 (http://ccb.jhu.edu/software/kraken2/)
 	conda install -c bioconda kraken2
+	
+Seleccionar una base de datos de esta página: https://benlangmead.github.io/aws-indexes/k2 y descargarla con wget.
+Descomprimir la base de datos (tar -vxzf filename.tar.gz) en un directorio de repositorio
+Para usuarios de botanero la base de datos disponible es PlusPF-8 update 08/9/2022
 
 5. MaxBin2 (https://anaconda.org/bioconda/maxbin2),
 	#Por conda
