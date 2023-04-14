@@ -104,15 +104,3 @@ For botanero server users the database available is PlusPF-8 update 08/9/2022
 # Get test run data--------------------------------------------------------
 
 Run: ./getData.sh
-
-# Quality of sequences -----------------------------------------------------
-
-Run: ./src/2_QualityCheck.sh
-
-Aquí hay que sacar los archivos del primer html para ver en dónde hay que poner
-los cortes que necesita Trinity. 
-
-Como no hay ambiente gráfico hay que ver los archivos localmente. Para mandarlos
-a la computadora local hay que hacer:
-
-scp dvaldivia@botanero.cs.cinvestav.mx:/home/dvaldivia/projects/biodigestores/bioinfo/metagenomics/results/fastqc/*.html .
