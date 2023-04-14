@@ -3,6 +3,7 @@
 En este repositorio puede encontrarse el pipeline de análisis de muestras metagenómicas para el proyecto Conacyt 319773:
 
 **"Producción de biocombustibles para uso rural a partir de desechos agropecuarios mediante la optimización de consorcios microbianos usando metagenómica"**
+![My Image](doc/diagramaPipeline_english.png)
 
 ## Contenido:
 - **src**: Contiene los scripts del pipeline. Estos scripts pueden encontrarse en el path `/home/metagenomics/projects/biodigestores/metaPipeline` del servidor `botanero.cs.cinvestav.mx`
