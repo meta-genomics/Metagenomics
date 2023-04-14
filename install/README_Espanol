@@ -104,19 +104,3 @@ Para usuarios de botanero la base de datos disponible es PlusPF-8 update 08/9/20
 
 Run: ./getData.sh
 
-# Calidad de secuencias -----------------------------------------------------
-
-Run: ./src/2_QualityCheck.sh
-
-Aquí hay que sacar los archivos del primer html para ver en dónde hay que poner
-los cortes que necesita Trinity. 
-
-Como no hay ambiente gráfico hay que ver los archivos localmente. Para mandarlos
-a la computadora local hay que hacer:
-
-scp dvaldivia@botanero.cs.cinvestav.mx:/home/dvaldivia/projects/biodigestores/bioinfo/metagenomics/results/fastqc/*.html .
-
-
-
-
-
