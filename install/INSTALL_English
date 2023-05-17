@@ -38,7 +38,7 @@ Before use of SRA toolkit it necessary to configure it according to this guide h
 5. Kraken2 (http://ccb.jhu.edu/software/kraken2/)
 	conda install -c bioconda kraken2
 	
-Select a database from this source: https://benlangmead.github.io/aws-indexes/k2 y descargarla con wget.
+Select a database from this source: https://benlangmead.github.io/aws-indexes/k2 y download with wget.
 Unzip database (tar -vxzf filename.tar.gz) in a folder to be used as repository 
 For botanero server users the database available is PlusPF-8 update 08/9/2022
 
